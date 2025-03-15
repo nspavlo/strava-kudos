@@ -170,14 +170,94 @@
         background-color: #aaa;
         cursor: not-allowed;
       }
+        #debug-menu {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background-color: white;
+        border: 1px solid #ccc;
+        padding: 10px;
+        z-index: 1000;
+      }
+      #debug-menu button {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .highlight {
+        border: 2px solid red;
+      }
     `
     document.head.appendChild(style)
+  }
+
+  // Function to create debug menu
+  function createDebugMenu() {
+    const debugMenu = document.createElement('div')
+    debugMenu.id = 'debug-menu'
+
+    const triggerLimitNotificationBtn = document.createElement('button')
+    triggerLimitNotificationBtn.innerText = 'Trigger Kudos Limit Notification'
+    triggerLimitNotificationBtn.addEventListener(
+      'click',
+      triggerKudosLimitNotification
+    )
+
+    const highlightNextKudoBtn = document.createElement('button')
+    highlightNextKudoBtn.innerText = 'Highlight Next Kudos Button'
+    highlightNextKudoBtn.addEventListener('click', highlightNextKudosButton)
+
+    const removeAllKudosBtn = document.createElement('button')
+    removeAllKudosBtn.innerText = 'Remove All Kudos'
+    removeAllKudosBtn.addEventListener('click', removeAllKudos)
+
+    debugMenu.appendChild(triggerLimitNotificationBtn)
+    debugMenu.appendChild(highlightNextKudoBtn)
+    debugMenu.appendChild(removeAllKudosBtn)
+
+    document.body.appendChild(debugMenu)
+  }
+
+  // Function to trigger kudos limit notification
+  async function triggerKudosLimitNotification() {
+    const { kudosCount, lastReset } = await getKudosStats()
+    const now = Date.now()
+    const timeRemaining = Math.ceil((lastReset + 3600000 - now) / 60000)
+    alert(
+      `You've reached the hourly kudos limit (${KUDOS_LIMIT}). Please try again in about ${timeRemaining} minutes.`
+    )
+  }
+
+  // Function to highlight the next kudos button
+  let currentKudoIndex = 0
+  function highlightNextKudosButton() {
+    const kudoButtons = Array.from(
+      document.querySelectorAll('.js-add-kudo:not(.js-kudo-added)')
+    )
+    if (kudoButtons.length === 0) return
+
+    // Remove highlight from previous button
+    if (currentKudoIndex > 0) {
+      kudoButtons[currentKudoIndex - 1].classList.remove('highlight')
+    }
+
+    // Highlight the next button
+    kudoButtons[currentKudoIndex].classList.add('highlight')
+
+    // Update index
+    currentKudoIndex = (currentKudoIndex + 1) % kudoButtons.length
+  }
+
+  // Function to remove all kudos
+  async function removeAllKudos() {
+    await resetKudosCount()
+    alert('All kudos have been removed.')
   }
 
   // Initialize
   function initialize() {
     addCustomStyles()
     injectKudoAllButton()
+    createDebugMenu()
 
     // Add a mutation observer to handle dynamically loaded content
     const observer = new MutationObserver((mutations) => {
