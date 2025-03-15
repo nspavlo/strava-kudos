@@ -7,6 +7,9 @@
   const STORAGE_KEY_KUDOS_COUNT = 'strava_kudos_count'
   const STORAGE_KEY_LAST_RESET = 'strava_kudos_last_reset'
 
+  // Variable to keep track of the current kudo index
+  let currentKudoIndex = 0
+
   // Function to inject the "Kudo All" button
   function injectKudoAllButton() {
     console.log('injectKudoAllButton called')
@@ -20,7 +23,6 @@
     const featureFeed = document.querySelector('.feature-feed')
     if (!featureFeed) {
       console.log('Feature feed not found, retrying in 3 seconds')
-      // If feed header isn't found, try again later
       setTimeout(injectKudoAllButton, 3000)
       return
     }
@@ -82,12 +84,12 @@
     button.innerText = 'Processing...'
     button.disabled = true
 
-    // Find all kudos buttons
+    // Find all kudos buttons excluding own activities
     const kudoButtons = Array.from(
       document.querySelectorAll(
         'button[data-testid="kudos_button"]:not(.js-kudo-added)'
       )
-    )
+    ).filter((button) => button.title === 'Give kudos')
 
     // Calculate how many kudos we can give
     const availableKudos = KUDOS_LIMIT - kudosCount
@@ -248,13 +250,13 @@
   }
 
   // Function to highlight the next kudos button
-  let currentKudoIndex = 0
   function highlightNextKudosButton() {
     const kudoButtons = Array.from(
       document.querySelectorAll(
         'button[data-testid="kudos_button"]:not(.js-kudo-added)'
       )
-    )
+    ).filter((button) => button.title === 'Give kudos')
+
     if (kudoButtons.length === 0) {
       console.log('No kudos buttons found')
       return
@@ -269,7 +271,7 @@
     }
 
     // Apply scale effect to the next button
-    kudoButtons[currentKudoIndex].style.transform = 'scale(1.2)'
+    kudoButtons[currentKudoIndex].style.transform = 'scale(1.1)'
     kudoButtons[currentKudoIndex].style.transition = 'transform 0.3s ease'
 
     // Update index
@@ -282,7 +284,8 @@
       document.querySelectorAll(
         'button[data-testid="kudos_button"]:not(.js-kudo-added)'
       )
-    )
+    ).filter((button) => button.title === 'Give kudos')
+
     if (kudoButtons.length === 0) {
       console.log('No kudos buttons found')
       return
@@ -299,7 +302,7 @@
       (currentKudoIndex - 1 + kudoButtons.length) % kudoButtons.length
 
     // Apply scale effect to the previous button
-    kudoButtons[currentKudoIndex].style.transform = 'scale(1.2)'
+    kudoButtons[currentKudoIndex].style.transform = 'scale(1.1)'
     kudoButtons[currentKudoIndex].style.transition = 'transform 0.3s ease'
   }
 
