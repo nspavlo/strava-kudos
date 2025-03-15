@@ -84,7 +84,9 @@
 
     // Find all kudos buttons
     const kudoButtons = Array.from(
-      document.querySelectorAll('.js-add-kudo:not(.js-kudo-added)')
+      document.querySelectorAll(
+        'button[data-testid="kudos_button"]:not(.js-kudo-added)'
+      )
     )
 
     // Calculate how many kudos we can give
@@ -244,17 +246,26 @@
   let currentKudoIndex = 0
   function highlightNextKudosButton() {
     const kudoButtons = Array.from(
-      document.querySelectorAll('.js-add-kudo:not(.js-kudo-added)')
+      document.querySelectorAll(
+        'button[data-testid="kudos_button"]:not(.js-kudo-added)'
+      )
     )
-    if (kudoButtons.length === 0) return
-
-    // Remove highlight from previous button
-    if (currentKudoIndex > 0) {
-      kudoButtons[currentKudoIndex - 1].classList.remove('highlight')
+    if (kudoButtons.length === 0) {
+      console.log('No kudos buttons found')
+      return
     }
 
-    // Highlight the next button
-    kudoButtons[currentKudoIndex].classList.add('highlight')
+    console.log('Kudo buttons found:', kudoButtons.length)
+
+    // Remove scale effect from the previous button
+    if (currentKudoIndex > 0) {
+      kudoButtons[currentKudoIndex - 1].style.transform = 'scale(1)'
+      kudoButtons[currentKudoIndex - 1].style.transition = 'transform 0.3s ease'
+    }
+
+    // Apply scale effect to the next button
+    kudoButtons[currentKudoIndex].style.transform = 'scale(1.2)'
+    kudoButtons[currentKudoIndex].style.transition = 'transform 0.3s ease'
 
     // Update index
     currentKudoIndex = (currentKudoIndex + 1) % kudoButtons.length
