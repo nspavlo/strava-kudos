@@ -221,12 +221,17 @@
     highlightNextKudoBtn.innerText = 'Highlight Next Kudos Button'
     highlightNextKudoBtn.addEventListener('click', highlightNextKudosButton)
 
+    const highlightPrevKudoBtn = document.createElement('button')
+    highlightPrevKudoBtn.innerText = 'Highlight Previous Kudos Button'
+    highlightPrevKudoBtn.addEventListener('click', highlightPrevKudosButton)
+
     const removeAllKudosBtn = document.createElement('button')
     removeAllKudosBtn.innerText = 'Remove All Kudos'
     removeAllKudosBtn.addEventListener('click', removeAllKudos)
 
     debugMenu.appendChild(triggerLimitNotificationBtn)
     debugMenu.appendChild(highlightNextKudoBtn)
+    debugMenu.appendChild(highlightPrevKudoBtn)
     debugMenu.appendChild(removeAllKudosBtn)
 
     document.body.appendChild(debugMenu)
@@ -269,6 +274,33 @@
 
     // Update index
     currentKudoIndex = (currentKudoIndex + 1) % kudoButtons.length
+  }
+
+  // Function to highlight the previous kudos button
+  function highlightPrevKudosButton() {
+    const kudoButtons = Array.from(
+      document.querySelectorAll(
+        'button[data-testid="kudos_button"]:not(.js-kudo-added)'
+      )
+    )
+    if (kudoButtons.length === 0) {
+      console.log('No kudos buttons found')
+      return
+    }
+
+    console.log('Kudo buttons found:', kudoButtons.length)
+
+    // Remove scale effect from the current button
+    kudoButtons[currentKudoIndex].style.transform = 'scale(1)'
+    kudoButtons[currentKudoIndex].style.transition = 'transform 0.3s ease'
+
+    // Update index
+    currentKudoIndex =
+      (currentKudoIndex - 1 + kudoButtons.length) % kudoButtons.length
+
+    // Apply scale effect to the previous button
+    kudoButtons[currentKudoIndex].style.transform = 'scale(1.2)'
+    kudoButtons[currentKudoIndex].style.transition = 'transform 0.3s ease'
   }
 
   // Function to remove all kudos
