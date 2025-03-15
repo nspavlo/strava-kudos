@@ -9,28 +9,41 @@
 
   // Function to inject the "Kudo All" button
   function injectKudoAllButton() {
+    console.log('injectKudoAllButton called')
     // Check if the button already exists
     if (document.getElementById('strava-kudo-all-btn')) {
+      console.log('Kudo All button already exists')
       return
     }
 
     // Find the feed container
-    const feedHeader = document.querySelector('.feed-header')
-    if (!feedHeader) {
+    const featureFeed = document.querySelector('.feature-feed')
+    if (!featureFeed) {
+      console.log('Feature feed not found, retrying in 3 seconds')
       // If feed header isn't found, try again later
-      setTimeout(injectKudoAllButton, 1000)
+      setTimeout(injectKudoAllButton, 3000)
       return
     }
+
+    console.log('Feed header found, creating Kudo All button')
+
+    // Create the container div
+    const containerDiv = document.createElement('div')
+    containerDiv.style.textAlign = 'right'
+    containerDiv.style.margin = '10px 0'
 
     // Create the button
     const kudoAllBtn = document.createElement('button')
     kudoAllBtn.id = 'strava-kudo-all-btn'
     kudoAllBtn.className = 'btn-primary'
     kudoAllBtn.innerText = 'Kudo All'
-    kudoAllBtn.style.marginLeft = '10px'
+    kudoAllBtn.style.width = 'max-content'
 
-    // Append button to feed header
-    feedHeader.appendChild(kudoAllBtn)
+    // Append button to container
+    containerDiv.appendChild(kudoAllBtn)
+
+    // Insert container above feature feed
+    featureFeed.parentNode.insertBefore(containerDiv, featureFeed)
 
     // Add click event listener
     kudoAllBtn.addEventListener('click', handleKudoAll)
