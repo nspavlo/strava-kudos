@@ -16,7 +16,12 @@
       document.querySelectorAll(
         'button[data-testid="kudos_button"]:not(.js-kudo-added)'
       )
-    ).filter((button) => button.title === 'Give kudos')
+    ).filter((button) => {
+      return (
+        button.title === 'Give kudos' ||
+        button.title === 'Be the first to give kudos!'
+      )
+    })
   }
 
   // Function to inject the "Kudo All" button
