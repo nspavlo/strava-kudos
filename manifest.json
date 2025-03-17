@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Strava Kudos",
+  "name": "Strava Kudos (BETA)",
   "version": "0.1",
-  "description": "Effortlessly give kudos to all activities in your Strava feed.",
+  "description": "Effortlessly give kudos to all activities in your feed. (THIS EXTENSION IS FOR BETA TESTING)",
   "permissions": ["activeTab", "storage"],
   "host_permissions": ["https://*.strava.com/*"],
   "action": {
