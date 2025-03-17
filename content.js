@@ -10,6 +10,15 @@
   // Variable to keep track of the current kudo index
   let currentKudoIndex = 0
 
+  // Function to get all available kudo buttons
+  function getAvailableKudoButtons() {
+    return Array.from(
+      document.querySelectorAll(
+        'button[data-testid="kudos_button"]:not(.js-kudo-added)'
+      )
+    ).filter((button) => button.title === 'Give kudos')
+  }
+
   // Function to inject the "Kudo All" button
   function injectKudoAllButton() {
     console.log('injectKudoAllButton called')
@@ -85,11 +94,7 @@
     button.disabled = true
 
     // Find all kudos buttons excluding own activities
-    const kudoButtons = Array.from(
-      document.querySelectorAll(
-        'button[data-testid="kudos_button"]:not(.js-kudo-added)'
-      )
-    ).filter((button) => button.title === 'Give kudos')
+    const kudoButtons = getAvailableKudoButtons()
 
     // Calculate how many kudos we can give
     const availableKudos = KUDOS_LIMIT - kudosCount
@@ -251,11 +256,7 @@
 
   // Function to highlight the next kudos button
   function highlightNextKudosButton() {
-    const kudoButtons = Array.from(
-      document.querySelectorAll(
-        'button[data-testid="kudos_button"]:not(.js-kudo-added)'
-      )
-    ).filter((button) => button.title === 'Give kudos')
+    const kudoButtons = getAvailableKudoButtons()
 
     if (kudoButtons.length === 0) {
       console.log('No kudos buttons found')
@@ -280,11 +281,7 @@
 
   // Function to highlight the previous kudos button
   function highlightPrevKudosButton() {
-    const kudoButtons = Array.from(
-      document.querySelectorAll(
-        'button[data-testid="kudos_button"]:not(.js-kudo-added)'
-      )
-    ).filter((button) => button.title === 'Give kudos')
+    const kudoButtons = getAvailableKudoButtons()
 
     if (kudoButtons.length === 0) {
       console.log('No kudos buttons found')
