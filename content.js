@@ -71,12 +71,18 @@
     if (!button) return
 
     // Check if we have enough kudos left
-    const { kudosCount, lastReset } = await getKudosStats()
+    let { kudosCount, lastReset } = await getKudosStats()
     const now = Date.now()
 
     // Reset counter if it's been more than an hour since last reset
-    if (now - lastReset > 3600000) {
+    if (now - lastReset >= 3600000) {
       await resetKudosCount()
+
+      // Get the updated stats after resetting
+      const updatedStats = await getKudosStats()
+      kudosCount = updatedStats.kudosCount
+      lastReset = updatedStats.lastReset
+
       button.innerText = 'Kudo All'
       button.disabled = false
     }
@@ -145,9 +151,13 @@
       chrome.storage.local.get(
         [STORAGE_KEY_KUDOS_COUNT, STORAGE_KEY_LAST_RESET],
         (result) => {
+          // If lastReset doesn't exist, set it to 1 hour ago instead of now
+          // This ensures users can immediately use the feature after installation
+          const defaultLastReset = Date.now() - 3600000 // 1 hour ago
+
           resolve({
             kudosCount: result[STORAGE_KEY_KUDOS_COUNT] || 0,
-            lastReset: result[STORAGE_KEY_LAST_RESET] || Date.now(),
+            lastReset: result[STORAGE_KEY_LAST_RESET] || defaultLastReset,
           })
         }
       )
