@@ -133,8 +133,32 @@
       // Increment kudos count in storage
       await incrementKudosCount()
 
-      // Wait before next kudo
-      await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY))
+      // Create a more human-like variable delay pattern
+      let delay
+
+      // Small chance (5%) for a very long pause (2-4 seconds)
+      if (Math.random() < 0.05) {
+        delay = 2000 + Math.random() * 2000 // 2-4 seconds
+        console.log('Taking a coffee break:', Math.round(delay) + 'ms')
+      }
+      // Medium chance (15%) for a longer pause (1.5-2.5 seconds)
+      else if (Math.random() < 0.15) {
+        delay = 1500 + Math.random() * 1000 // 1.5-2.5 seconds
+        console.log('Brief pause:', Math.round(delay) + 'ms')
+      }
+      // Chance for a slightly faster click (70-90% of base rate)
+      else if (Math.random() < 0.25) {
+        delay = RATE_LIMIT_DELAY * (0.7 + Math.random() * 0.2) // 700-900ms
+        console.log('Quick click:', Math.round(delay) + 'ms')
+      }
+      // Regular variation (80-120% of base rate)
+      else {
+        delay = RATE_LIMIT_DELAY * (0.8 + Math.random() * 0.4) // 800-1200ms
+        console.log('Regular click:', Math.round(delay) + 'ms')
+      }
+
+      // Wait with variable delay before next kudo
+      await new Promise((resolve) => setTimeout(resolve, delay))
     }
 
     // Update button text when done
