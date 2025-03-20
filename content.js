@@ -6,6 +6,8 @@
   // Storage keys
   const STORAGE_KEY_KUDOS_COUNT = 'strava_kudos_count'
   const STORAGE_KEY_LAST_RESET = 'strava_kudos_last_reset'
+  const STORAGE_KEY_SETTINGS = 'strava_kudos_settings'
+  const STORAGE_KEY_STATS = 'strava_kudos_stats'
 
   // Variable to keep track of the current kudo index
   let currentKudoIndex = 0
@@ -63,6 +65,30 @@
 
     // Add click event listener
     kudoAllBtn.addEventListener('click', handleKudoAll)
+  }
+
+  async function trackKudoStatistics(count) {
+    return new Promise((resolve) => {
+      chrome.storage.local.get([STORAGE_KEY_STATS], (result) => {
+        const today = new Date().toISOString().split('T')[0]
+        const stats = result[STORAGE_KEY_STATS] || {
+          daily: {},
+          allTime: 0,
+          lastActivity: null,
+        }
+
+        // Update today's count
+        stats.daily[today] = (stats.daily[today] || 0) + count
+
+        // Update all time count
+        stats.allTime += count
+
+        // Update last activity time
+        stats.lastActivity = Date.now()
+
+        chrome.storage.local.set({ [STORAGE_KEY_STATS]: stats }, resolve)
+      })
+    })
   }
 
   // Function to handle "Kudo All" button click
@@ -160,6 +186,8 @@
       // Wait with variable delay before next kudo
       await new Promise((resolve) => setTimeout(resolve, delay))
     }
+
+    await trackKudoStatistics(clickedCount)
 
     // Update button text when done
     button.innerText = `Kudoed ${clickedCount} Activities`
@@ -348,11 +376,46 @@
     alert('All kudos have been removed.')
   }
 
+  async function loadSettings() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get([STORAGE_KEY_SETTINGS], (result) => {
+        const defaultSettings = {
+          minDelay: 1000,
+        }
+
+        resolve(result[STORAGE_KEY_SETTINGS] || defaultSettings)
+      })
+    })
+  }
+
   // Initialize
-  function initialize() {
+  async function initialize() {
     addCustomStyles()
     injectKudoAllButton()
     createDebugMenu()
+
+    // Get settings
+    const settings = await loadSettings()
+
+    // Update RATE_LIMIT_DELAY from settings
+    RATE_LIMIT_DELAY = settings.minDelay
+
+    // Add a listener for storage changes to update settings in real-time
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      if (namespace === 'local' && changes[STORAGE_KEY_SETTINGS]) {
+        const newSettings = changes[STORAGE_KEY_SETTINGS].newValue
+
+        // Update debug menu visibility if that setting changed
+        if (newSettings && newSettings.showDebugMenu !== undefined) {
+          updateDebugMenuVisibility(newSettings.showDebugMenu)
+        }
+
+        // Update delay if that setting changed
+        if (newSettings && newSettings.minDelay !== undefined) {
+          RATE_LIMIT_DELAY = newSettings.minDelay
+        }
+      }
+    })
 
     // Add a mutation observer to handle dynamically loaded content
     const observer = new MutationObserver((mutations) => {

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Strava Kudos (BETA)</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        width: 300px;
+        padding: 15px;
+        color: #333;
+      }
+
+      h2 {
+        margin-top: 0;
+        color: #fc5200;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      .tab-buttons {
+        display: flex;
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .tab-button {
+        background: none;
+        border: none;
+        padding: 8px 15px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .tab-button:hover {
+        color: #ffffff;
+      }
+
+      .tab-button.active {
+        color: #fc5200;
+        font-weight: bold;
+        border-bottom: 2px solid #fc5200;
+      }
+
+      .tab-button.active:hover {
+        color: #ffffff;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .setting-group {
+        margin-bottom: 15px;
+      }
+
+      .setting-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+
+      input[type='range'] {
+        width: 100%;
+      }
+
+      .range-value {
+        display: block;
+        text-align: center;
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      button {
+        background-color: #fc5200;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+
+      button:hover {
+        background-color: #e54b00;
+      }
+
+      .stat-box {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+      }
+
+      .stat-box h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .stat-value {
+        font-size: 20px;
+        font-weight: bold;
+        color: #fc5200;
+      }
+
+      .stat-caption {
+        font-size: 12px;
+        color: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Strava Kudos (BETA)</h2>
+
+    <div class="tab-buttons">
+      <button class="tab-button active" data-tab="settings">Settings</button>
+      <button class="tab-button" data-tab="statistics">Statistics</button>
+    </div>
+
+    <div class="tab-content active" id="settings-tab">
+      <div class="setting-group">
+        <label class="setting-label">Minimum delay between kudos</label>
+        <input
+          type="range"
+          min="500"
+          max="2000"
+          value="1000"
+          id="setting-min-delay"
+        />
+        <span class="range-value" id="min-delay-value">1000 ms</span>
+      </div>
+
+      <button id="save-settings">Save Settings</button>
+    </div>
+
+    <div class="tab-content" id="statistics-tab">
+      <div class="stat-box">
+        <h3>Today</h3>
+        <div class="stat-value" id="stat-today">0</div>
+        <div class="stat-caption">kudos given</div>
+      </div>
+
+      <div class="stat-box">
+        <h3>This Week</h3>
+        <div class="stat-value" id="stat-week">0</div>
+        <div class="stat-caption">kudos given</div>
+      </div>
+
+      <div class="stat-box">
+        <h3>All Time</h3>
+        <div class="stat-value" id="stat-all-time">0</div>
+        <div class="stat-caption">kudos given</div>
+      </div>
+
+      <div class="stat-box">
+        <h3>Last Activity</h3>
+        <div class="stat-value" id="stat-last-activity">Never</div>
+      </div>
+
+      <button id="reset-stats">Reset Statistics</button>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
