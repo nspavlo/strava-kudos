@@ -299,14 +299,9 @@
     highlightPrevKudoBtn.innerText = 'Highlight Previous Kudos Button'
     highlightPrevKudoBtn.addEventListener('click', highlightPrevKudosButton)
 
-    const removeAllKudosBtn = document.createElement('button')
-    removeAllKudosBtn.innerText = 'Remove All Kudos'
-    removeAllKudosBtn.addEventListener('click', removeAllKudos)
-
     debugMenu.appendChild(triggerLimitNotificationBtn)
     debugMenu.appendChild(highlightNextKudoBtn)
     debugMenu.appendChild(highlightPrevKudoBtn)
-    debugMenu.appendChild(removeAllKudosBtn)
 
     document.body.appendChild(debugMenu)
   }
@@ -368,12 +363,6 @@
     // Apply scale effect to the previous button
     kudoButtons[currentKudoIndex].style.transform = 'scale(1.1)'
     kudoButtons[currentKudoIndex].style.transition = 'transform 0.3s ease'
-  }
-
-  // Function to remove all kudos
-  async function removeAllKudos() {
-    await resetKudosCount()
-    alert('All kudos have been removed.')
   }
 
   async function loadSettings() {
