@@ -286,19 +286,6 @@
       #strava-kudo-all-btn.all-kudoed {
         background-color: #4CAF50;
       }
-      #debug-menu {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        background-color: white;
-        border: 1px solid #ccc;
-        padding: 10px;
-        z-index: 1000;
-      }
-      #debug-menu button {
-        display: block;
-        margin-bottom: 5px;
-      }
       .highlight {
         border: 2px solid red;
       }
@@ -306,109 +293,10 @@
     document.head.appendChild(style)
   }
 
-  // Function to create debug menu
-  function createDebugMenu() {
-    const debugMenu = document.createElement('div')
-    debugMenu.id = 'debug-menu'
-
-    const triggerLimitNotificationBtn = document.createElement('button')
-    triggerLimitNotificationBtn.innerText = 'Trigger Kudos Limit Notification'
-    triggerLimitNotificationBtn.addEventListener(
-      'click',
-      triggerKudosLimitNotification
-    )
-
-    const highlightNextKudoBtn = document.createElement('button')
-    highlightNextKudoBtn.innerText = 'Highlight Next Kudos Button'
-    highlightNextKudoBtn.addEventListener('click', highlightNextKudosButton)
-
-    const highlightPrevKudoBtn = document.createElement('button')
-    highlightPrevKudoBtn.innerText = 'Highlight Previous Kudos Button'
-    highlightPrevKudoBtn.addEventListener('click', highlightPrevKudosButton)
-
-    debugMenu.appendChild(triggerLimitNotificationBtn)
-    debugMenu.appendChild(highlightNextKudoBtn)
-    debugMenu.appendChild(highlightPrevKudoBtn)
-
-    document.body.appendChild(debugMenu)
-  }
-
-  // Function to trigger kudos limit notification
-  async function triggerKudosLimitNotification() {
-    const { kudosCount, lastReset } = await getKudosStats()
-    const now = Date.now()
-    const timeRemaining = Math.ceil((lastReset + 3600000 - now) / 60000)
-    alert(
-      `You've reached the hourly kudos limit (${KUDOS_LIMIT}). Please try again in about ${timeRemaining} minutes.`
-    )
-  }
-
-  // Function to highlight the next kudos button
-  function highlightNextKudosButton() {
-    const kudoButtons = getAvailableKudoButtons()
-
-    if (kudoButtons.length === 0) {
-      console.log('No kudos buttons found')
-      return
-    }
-
-    console.log('Kudo buttons found:', kudoButtons.length)
-
-    // Remove scale effect from the previous button
-    if (currentKudoIndex > 0) {
-      kudoButtons[currentKudoIndex - 1].style.transform = 'scale(1)'
-      kudoButtons[currentKudoIndex - 1].style.transition = 'transform 0.3s ease'
-    }
-
-    // Apply scale effect to the next button
-    kudoButtons[currentKudoIndex].style.transform = 'scale(1.1)'
-    kudoButtons[currentKudoIndex].style.transition = 'transform 0.3s ease'
-
-    // Update index
-    currentKudoIndex = (currentKudoIndex + 1) % kudoButtons.length
-  }
-
-  // Function to highlight the previous kudos button
-  function highlightPrevKudosButton() {
-    const kudoButtons = getAvailableKudoButtons()
-
-    if (kudoButtons.length === 0) {
-      console.log('No kudos buttons found')
-      return
-    }
-
-    console.log('Kudo buttons found:', kudoButtons.length)
-
-    // Remove scale effect from the current button
-    kudoButtons[currentKudoIndex].style.transform = 'scale(1)'
-    kudoButtons[currentKudoIndex].style.transition = 'transform 0.3s ease'
-
-    // Update index
-    currentKudoIndex =
-      (currentKudoIndex - 1 + kudoButtons.length) % kudoButtons.length
-
-    // Apply scale effect to the previous button
-    kudoButtons[currentKudoIndex].style.transform = 'scale(1.1)'
-    kudoButtons[currentKudoIndex].style.transition = 'transform 0.3s ease'
-  }
-
-  async function loadSettings() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get([STORAGE_KEY_SETTINGS], (result) => {
-        const defaultSettings = {
-          minDelay: 1000,
-        }
-
-        resolve(result[STORAGE_KEY_SETTINGS] || defaultSettings)
-      })
-    })
-  }
-
   // Initialize
   async function initialize() {
     addCustomStyles()
     injectKudoAllButton()
-    createDebugMenu()
 
     // Get settings
     const settings = await loadSettings()
@@ -420,11 +308,6 @@
     chrome.storage.onChanged.addListener((changes, namespace) => {
       if (namespace === 'local' && changes[STORAGE_KEY_SETTINGS]) {
         const newSettings = changes[STORAGE_KEY_SETTINGS].newValue
-
-        // Update debug menu visibility if that setting changed
-        if (newSettings && newSettings.showDebugMenu !== undefined) {
-          updateDebugMenuVisibility(newSettings.showDebugMenu)
-        }
 
         // Update delay if that setting changed
         if (newSettings && newSettings.minDelay !== undefined) {
