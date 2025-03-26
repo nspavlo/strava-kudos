@@ -32,6 +32,7 @@
     // Check if the button already exists
     if (document.getElementById('strava-kudo-all-btn')) {
       console.log('Kudo All button already exists')
+      updateKudoAllButtonState()
       return
     }
 
@@ -65,6 +66,29 @@
 
     // Add click event listener
     kudoAllBtn.addEventListener('click', handleKudoAll)
+
+    // Initial button state update
+    updateKudoAllButtonState()
+  }
+
+  // Function to update the Kudo All button based on available kudos
+  function updateKudoAllButtonState() {
+    const button = document.getElementById('strava-kudo-all-btn')
+    if (!button) return
+
+    const kudoButtons = getAvailableKudoButtons()
+
+    if (kudoButtons.length === 0) {
+      // No kudos buttons available
+      button.innerText = 'Everyone Kudoed!'
+      button.classList.add('all-kudoed')
+      button.disabled = true
+    } else {
+      // Kudos buttons available
+      button.innerText = `Kudo All (${kudoButtons.length})`
+      button.classList.remove('all-kudoed')
+      button.disabled = false
+    }
   }
 
   async function trackKudoStatistics(count) {
@@ -192,8 +216,7 @@
     // Update button text when done
     button.innerText = `Kudoed ${clickedCount} Activities`
     setTimeout(() => {
-      button.innerText = 'Kudo All'
-      button.disabled = false
+      updateKudoAllButtonState()
     }, 3000)
   }
 
@@ -254,12 +277,16 @@
         padding: 5px 10px;
         cursor: pointer;
         font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
       }
       #strava-kudo-all-btn:disabled {
         background-color: #aaa;
         cursor: not-allowed;
       }
-        #debug-menu {
+      #strava-kudo-all-btn.all-kudoed {
+        background-color: #4CAF50;
+      }
+      #debug-menu {
         position: fixed;
         top: 10px;
         right: 10px;
