@@ -1,6 +1,4 @@
 // Storage keys
-const STORAGE_KEY_KUDOS_COUNT = 'strava_kudos_count'
-const STORAGE_KEY_LAST_RESET = 'strava_kudos_last_reset'
 const STORAGE_KEY_SETTINGS = 'strava_kudos_settings'
 const STORAGE_KEY_STATS = 'strava_kudos_stats'
 
@@ -32,16 +30,15 @@ function loadSettings() {
     const settings = result[STORAGE_KEY_SETTINGS] || DEFAULT_SETTINGS
 
     document.getElementById('setting-min-delay').value = settings.minDelay
-    document.getElementById(
-      'min-delay-value'
-    ).textContent = `${settings.minDelay} ms`
+    document.getElementById('min-delay-value').textContent =
+      `${settings.minDelay} ms`
   })
 }
 
 // Save settings
 function saveSettings() {
   const settings = {
-    minDelay: parseInt(document.getElementById('setting-min-delay').value),
+    minDelay: parseInt(document.getElementById('setting-min-delay').value, 10),
   }
 
   chrome.storage.local.set({ [STORAGE_KEY_SETTINGS]: settings }, function () {
@@ -145,9 +142,8 @@ document.addEventListener('DOMContentLoaded', function () {
   document
     .getElementById('setting-min-delay')
     .addEventListener('input', function () {
-      document.getElementById(
-        'min-delay-value'
-      ).textContent = `${this.value} ms`
+      document.getElementById('min-delay-value').textContent =
+        `${this.value} ms`
     })
 
   // Save button

@@ -1,16 +1,13 @@
 ;(function () {
   // Configuration
   const KUDOS_LIMIT = 100 // Maximum kudos per hour
-  const RATE_LIMIT_DELAY = 1000 // Delay between kudos in milliseconds
+  let rateLimitDelay = 1000 // Delay between kudos in milliseconds
 
   // Storage keys
   const STORAGE_KEY_KUDOS_COUNT = 'strava_kudos_count'
   const STORAGE_KEY_LAST_RESET = 'strava_kudos_last_reset'
   const STORAGE_KEY_SETTINGS = 'strava_kudos_settings'
   const STORAGE_KEY_STATS = 'strava_kudos_stats'
-
-  // Variable to keep track of the current kudo index
-  let currentKudoIndex = 0
 
   // Function to get all available kudo buttons
   function getAvailableKudoButtons() {
@@ -115,6 +112,19 @@
     })
   }
 
+  // Load extension settings from storage
+  async function loadSettings() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get([STORAGE_KEY_SETTINGS], (result) => {
+        resolve(
+          result[STORAGE_KEY_SETTINGS] || {
+            minDelay: 1000,
+          }
+        )
+      })
+    })
+  }
+
   // Function to handle "Kudo All" button click
   async function handleKudoAll() {
     const button = document.getElementById('strava-kudo-all-btn')
@@ -198,12 +208,12 @@
       }
       // Chance for a slightly faster click (70-90% of base rate)
       else if (Math.random() < 0.25) {
-        delay = RATE_LIMIT_DELAY * (0.7 + Math.random() * 0.2) // 700-900ms
+        delay = rateLimitDelay * (0.7 + Math.random() * 0.2) // 700-900ms
         console.log('Quick click:', Math.round(delay) + 'ms')
       }
       // Regular variation (80-120% of base rate)
       else {
-        delay = RATE_LIMIT_DELAY * (0.8 + Math.random() * 0.4) // 800-1200ms
+        delay = rateLimitDelay * (0.8 + Math.random() * 0.4) // 800-1200ms
         console.log('Regular click:', Math.round(delay) + 'ms')
       }
 
@@ -301,8 +311,8 @@
     // Get settings
     const settings = await loadSettings()
 
-    // Update RATE_LIMIT_DELAY from settings
-    RATE_LIMIT_DELAY = settings.minDelay
+    // Update delay from settings
+    rateLimitDelay = settings.minDelay
 
     // Add a listener for storage changes to update settings in real-time
     chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -311,13 +321,13 @@
 
         // Update delay if that setting changed
         if (newSettings && newSettings.minDelay !== undefined) {
-          RATE_LIMIT_DELAY = newSettings.minDelay
+          rateLimitDelay = newSettings.minDelay
         }
       }
     })
 
     // Add a mutation observer to handle dynamically loaded content
-    const observer = new MutationObserver((mutations) => {
+    const observer = new MutationObserver(() => {
       injectKudoAllButton()
     })
 

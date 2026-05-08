@@ -1,0 +1,18 @@
+{
+  "name": "strava-kudos",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Strava Kudos Chrome extension",
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.26.0",
+    "eslint": "^9.26.0",
+    "globals": "^15.15.0",
+    "prettier": "^3.5.3"
+  }
+}
